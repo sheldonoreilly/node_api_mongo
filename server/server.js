@@ -1,11 +1,12 @@
-var express = require("express");
-var bodyParser = require("body-parser");
+const _ = require("lodash");
+const express = require("express");
+const bodyParser = require("body-parser");
 
-var { mongoose } = require("./db/mongoose");
-var { Todo } = require("./models/todo");
-var { User } = require("./models/user");
+let { mongoose } = require("./db/mongoose");
+let { Todo } = require("./models/todo");
+let { User } = require("./models/user");
 
-var app = express();
+const app = express();
 
 // if deployed use env port 'or' 3000 for local
 const port = process.env.PORT || 3000;
@@ -79,6 +80,39 @@ app.delete("/todos/:id", (req, res) => {
 			}
 		})
 		.catch(err => {
+			res.status(400).send();
+		});
+});
+
+app.patch("/todos/:id", (req, res) => {
+	const id = req.params.id;
+
+	//set only the fields in db that can be set be user
+	var body = _.pick(req.body, ["text", "completed"]);
+
+	//validate the id
+	//if ! then return 404
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		return res.status(404).send();
+	}
+
+	// if a boolean and its set to true
+	if (_.isBoolean(body.completed) && body.completed) {
+		//set the current time timestamp
+		body.completedAt = new Date().getTime();
+	} else {
+		body.completed = false;
+		body.completedAt = null;
+	}
+
+	Todo.findByIdAndUpdate(id, { $set: body }, { new: true })
+		.then(newObj => {
+			if (!newObj) {
+				return res.status(404).send();
+			}
+			res.send({ newObj });
+		})
+		.catch(e => {
 			res.status(400).send();
 		});
 });
