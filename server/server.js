@@ -59,6 +59,30 @@ app.get("/todos/:id", (req, res) => {
 		});
 });
 
+app.delete("/todos/:id", (req, res) => {
+	//get the incoming id
+	const id = req.params.id;
+	//validate the id
+	//if ! then return 404
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		return res.status(404).send();
+	}
+
+	Todo.findByIdAndRemove(id)
+		.then(deletedDoc => {
+			//ensure that a doc did exist
+			//if so return it else return 404
+			if (deletedDoc) {
+				res.send({ deletedDoc });
+			} else {
+				res.status(404).send();
+			}
+		})
+		.catch(err => {
+			res.status(400).send();
+		});
+});
+
 app.listen(port, () => {
 	console.log(`Starting on port ${port}`);
 });
