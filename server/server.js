@@ -37,11 +37,10 @@ app.get("/todos", (req, res) => {
 		});
 });
 
-//ObjectId("5b8600f3332c0b2409c2ceae")
 app.get("/todos/:id", (req, res) => {
 	//lets ensure that the param is a valid id
 	if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-		return res.status(404).res.send();
+		return res.status(404).send();
 	}
 
 	Todo.findById(req.params.id)
