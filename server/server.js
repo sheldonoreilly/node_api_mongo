@@ -6,6 +6,9 @@ var { Todo } = require("./models/todo");
 var { User } = require("./models/user");
 
 var app = express();
+
+// if deployed use env port 'or' 3000 for local
+const port = process.env.PORT || 3000;
 //use middleware - .json returns a function used by express app
 // to take incoming request json and set back a 'body' js obj on the request.
 app.use(bodyParser.json());
@@ -56,8 +59,8 @@ app.get("/todos/:id", (req, res) => {
 		});
 });
 
-app.listen(3000, () => {
-	console.log("Started on port 3000");
+app.listen(port, () => {
+	console.log(`Starting on port ${port}`);
 });
 
 //set app property to the app variable

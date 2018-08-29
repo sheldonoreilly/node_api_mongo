@@ -109,3 +109,5 @@ describe("GET /todos/:id", () => {
 			.end(done);
 	});
 });
+
+//mongo: mongodb://<dbuser>:<dbpassword>@ds233228.mlab.com:33228/todoapi
